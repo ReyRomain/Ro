@@ -1,13 +1,73 @@
-/*import {addToCart} from "./datamanager.js";*/
+import {getCartContent, getProduct, removeProduct} from "./datamanager.js";
+
+const cart = getCartContent();
+console.log(cart);
+
+async function showPage(){
+    let product;
+    let html = "";
+    let total = 0;
+    let articles = 0;
+    for (const [idProduct, colors] of Object.entries(cart)){
+        for (const [color, qty] of Object.entries(colors)){
+            product = {
+                ...await getProduct(idProduct),
+                qty,
+                color
+            };
+            html += templateProduct(product);
+            total += product.price * qty;
+            articles += qty;
+        }
+    }
+    document.getElementById("cart__items").innerHTML = html;
+    document.getElementById("totalPrice").innerHTML = total;
+    document.getElementById("totalQuantity").innerHTML = articles;
+    //ici
+}
+
+showPage();
+
+function templateProduct(product){
+    return /*html*/ `
+        <article class="cart__item" data-id="${product._id}" data-color="${product.color}">
+            <div class="cart__item__img">
+                <img src="${product.imageUrl}" alt="${product.altTxt}">
+            </div>
+            <div class="cart__item__content">
+                <div class="cart__item__content__description">
+                <h2>${product.name}</h2>
+                <p>${product.color}</p>
+                <p>${product.price} €</p>
+                </div>
+                <div class="cart__item__content__settings">
+                <div class="cart__item__content__settings__quantity">
+                    <p>Qté : </p>
+                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}" onchange="updateQuantity('${product._id}', '${product.color}', this.value)">
+                </div>
+                <div class="cart__item__content__settings__delete" onclick="deleteProduct('${product._id}', '${product.color}')">
+                    <p class="deleteItem">Supprimer</p>
+                </div>
+                </div>
+            </div>
+            </article>
+    `;
+}
+
+
+// eslint-disable-next-line no-unused-vars
+function deleteProduct(id, color){
+    removeProduct(id, color);
+    showPage();
+}
+
+// eslint-disable-next-line no-unused-vars
+function updateQuantity(id, color, qty){
+    //datamanager
+    showPage();
+}
 
 /*
-//récupération des produits dans le localStorage
-function getCart() {
-    let cart = localStorage.getItem("addToCart");
-}
-*/
-
-
 
 //sauvegarde le panier
 function saveBasket(basket) {
@@ -142,3 +202,5 @@ class Basket {
         return total;
     }
 }
+
+*/

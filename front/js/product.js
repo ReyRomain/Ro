@@ -51,3 +51,9 @@ document.getElementById("addToCart").onclick = function (){
 };
 
 showProduct();
+
+/*
+export {
+    showProduct
+}
+*/

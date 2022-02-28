@@ -58,17 +58,33 @@ async function getProduct(id){
  * @param   {String}  color      [color description]
  * @param   {Number}  qty        [qty description]
  *
- * @return  {void}               complète storage et lo olcalStorage
+ * @return  {void}               complète storage et le localStorage
  */
 function addToCart(productId, color, qty){
     if (!storage[productId]) storage[productId] = {};
     if (!storage[productId][color]) storage[productId][color] = 0;
     storage[productId][color] +=qty;
+    saveStorage();
+}
+
+
+function getCartContent(){
+    return storage;
+}
+
+function removeProduct(id, color){
+    delete storage[id][color];
+    saveStorage();
+}
+
+function saveStorage(){
     localStorage.setItem("cart", JSON.stringify(storage));
 }
 
 export {
     addToCart,
+    getCartContent,
     getProduct,
-    getProductList
+    getProductList,
+    removeProduct
 };
