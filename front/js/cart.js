@@ -23,7 +23,6 @@ async function showPage(){
     document.getElementById("cart__items").innerHTML = html;
     document.getElementById("totalPrice").innerHTML = total;
     document.getElementById("totalQuantity").innerHTML = articles;
-    //ici
 }
 
 showPage();
@@ -54,6 +53,13 @@ function templateProduct(product){
     `;
 }
 
+//supprime le produit au click
+document.querySelectorAll(".deleteItem").forEach(item => item.addEventListener("click", (e) => {
+    let deleteItem = e.target.closest('[data-id]');
+    let product = deleteItem.dataset;
+    removeProduct(product);
+    window.location.assign("cart.html");
+}));
 
 // eslint-disable-next-line no-unused-vars
 function deleteProduct(id, color){
