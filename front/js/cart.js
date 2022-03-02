@@ -53,13 +53,15 @@ function templateProduct(product){
     `;
 }
 
+/*
 //supprime le produit au click
 document.querySelectorAll(".deleteItem").forEach(item => item.addEventListener("click", (e) => {
-    let deleteItem = e.target.closest('[data-id]');
+    let deleteItem = e.target.closest('cart_item');
     let product = deleteItem.dataset;
     removeProduct(product);
     window.location.assign("cart.html");
 }));
+*/
 
 // eslint-disable-next-line no-unused-vars
 function deleteProduct(id, color){
@@ -72,6 +74,30 @@ function updateQuantity(id, color, qty){
     //datamanager
     showPage();
 }
+
+//creation de l'objet contact
+let checkForm = document.querySelector("cart__order__form");
+
+checkForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
+    const address = document.getElementById("address");
+    const city = document.getElementById("city");
+    const email = document.getElementById("email");
+
+    //l'objet contact
+    contact = {
+        firstName = firstName,
+        lastName = lastName,
+        address = address,
+        city = city,
+        email = email
+    }
+});
+
+
+
 
 /*
 
