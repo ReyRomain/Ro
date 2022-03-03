@@ -80,159 +80,60 @@ let checkForm = document.querySelector("cart__order__form");
 
 checkForm.addEventListener("submit", function(event) {
     event.preventDefault();
-    const firstName = document.getElementById("firstName");
+    const firstName = document.getElementById("firstName").value;
     const lastName = document.getElementById("lastName");
     const address = document.getElementById("address");
     const city = document.getElementById("city");
     const email = document.getElementById("email");
 
     //l'objet contact
-    contact = {
+    const contact = {
         firstName = firstName,
         lastName = lastName,
         address = address,
         city = city,
         email = email
     }
+
+    //si le champs est validé regarder celui d'après sinon message d'erreur
+    if(firstNameIsValid(checkForm.firstName) == false){
+        alert("Veuillez entrer votre prénom");
+
+    }else if(lastNameIsValid(checkForm.lastName) == false){
+        alert("Veuillez entrer votre nom");
+
+    }else if(cityIsValid(checkForm.city) == false){
+        alert("Veuillez entrer votre ville");
+
+    }else if(mailIsValid(checkForm.email) == false){
+        alert("Veuillez entrer votre adresse email");
+
+    }else if(getCartContent.length == 0){
+        alert("Votre panier est vide, veuillez selectionner un produit");
+
+    }else{
+        saveForm(contact);
+    }
 });
 
-
-
-
-/*
-
-//sauvegarde le panier
-function saveBasket(basket) {
-    localStorage.setItem("basket", JSON.stringify(basket));
+//function qui envoie l'objet contact dans le localStorage
+function saveForm(contact){
+    localStorage.setItem("contact", JSON.stringify(contact));
 }
 
-//recupere le panier selected
-function getBasket() {
-    let basket = localStorage.getItem("basket");
-    if(basket == null) {
-        return [];
-    }else{
-        return JSON.parse(basket);
-    }
-}
+//vérification de checkForm
+checkForm.firstName.addEventListener('change', function(){
+    firstNameIsValid(this);
+});
 
-//ajoute un produit au panier
-function addBasket(product) {
-    let basket = getBasket();
-    let foundProduct = basket.find(p => p.id == product.id);
-    if (foundProduct != undefined) {
-        foundProduct.quantity++;
-    }else{
-        product.quantity = 1;
-        basket.push(product);
-    }
-    saveBasket(basket);
-}
+checkForm.lastName.addEventListener('change', function(){
+    lastNameIsValid(this);
+});
 
-//supprime un produit du panier
-function removeFromBasket(product) {
-    let basket = getBasket();
-    basket = basket.filter(p => p.id != product.id);
-    saveBasket(basket);
-}
+checkForm.city.addEventListener('change', function(){
+    cityIsValid(this);
+});
 
-//change la quantity selected
-function changeQuantity(product, quantity) {
-    let basket = getBasket();
-    let foundProduct = basket.find(p => p.id == product.id);
-    if (foundProduct != undefined) {
-        foundProduct.quantity += quantity;
-        if (foundProduct.quantity <= 0) {
-            removeFromBasket(product);
-        } else {
-            saveBasket(basket);
-        }
-    }
-}
-
-//recupere le nombre de produit
-function getNumberProduct() {
-    let basket = getBasket();
-    let number = 0;
-    for(let product of basket){
-        number += product.quantity;
-    }
-    return number;
-}
-
-//recupere le prix total
-function getTotalPrice() {
-    let basket = getBasket();
-    let total = 0;
-    for(let product of basket){
-        total += product.quantity * product.price;
-    }
-    return total;
-}
-
-
-//2e solution pour une meilleur performance
-
-class Basket {
-    constructor() {
-        let basket = localStorage.getItem("basket");
-        if (basket == null) {
-            this.basket = JSON.parse(basket);
-        }
-    }
-
-    save() {
-        localStorage.setItem("basket", JSON.stringify(this.basket));
-    }
-
-    //ajoute un produit au panier
-    add(product) {
-        let foundProduct = this.basket.find(p => p.id == product.id);
-        if (foundProduct != undefined) {
-            foundProduct.quantity++;
-        }else{
-            product.quantity = 1;
-            this.basket.push(product);
-        }
-        this.save();
-    }
-
-    //supprime un produit du panier
-    remove(product) {
-        this.basket = this.basket.filter(p => p.id != product.id);
-        this.save();
-    }
-
-    //change la quantity selected
-    changeQuantity(product, quantity) {
-        let foundProduct = this.basket.find(p => p.id == product.id);
-        if (foundProduct != undefined) {
-            foundProduct.quantity += quantity;
-            if (foundProduct.quantity <= 0) {
-                this.remove(product);
-            } else {
-                this.save();
-            }
-        }
-    }
-
-    //recupere le nombre de produit
-    getNumberProduct() {
-        let number = 0;
-        for(let product of this.basket){
-            number += product.quantity;
-        }
-        return number;
-    }
-
-    //recupere le prix total
-    getTotalPrice() {
-        let total = 0;
-        for(let product of this.basket){
-            total += product.quantity * product.price;
-        }
-        return total;
-    }
-}
-
-*/
+checkForm.email.addEventListener('change', function(){
+    mailIsValid(this);
+});
