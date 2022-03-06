@@ -1,7 +1,30 @@
-import {getCartContent, getProduct, removeProduct} from "./datamanager.js";
+import {getCartContent, getProduct, getProductList, removeProduct} from "./datamanager.js";
 
 const cart = getCartContent();
 console.log(cart);
+
+const validator  = {
+    firstName : {
+        msg : "Veuillez entrer votre prénom",
+        regex : /[a-z]{3,}/gi
+    },
+    lastName : {
+        msg : "Veuillez entrer votre nom",
+        regex : /[a-z]{3,}/gi
+    },
+    city : {
+        msg : "Veuillez entrer votre ville",
+        regex : /[a-z]{3,}/gi
+    },
+    email : {
+        msg : "Veuillez entrer votre adresse email",
+        regex : /[a-z]{3,}/gi
+    },
+    address : {
+        msg : "Veuillez entrer votre adresse",
+        regex : /[a-z]{3,}/gi
+    }
+};
 
 async function showPage(){
     let product;
@@ -21,8 +44,8 @@ async function showPage(){
         }
     }
     document.getElementById("cart__items").innerHTML = html;
-    document.getElementById("totalPrice").innerHTML = total;
-    document.getElementById("totalQuantity").innerHTML = articles;
+    document.getElementById("totalPrice").innerText = total.toString();
+    document.getElementById("totalQuantity").innerText = articles.toString();
 }
 
 showPage();
@@ -71,69 +94,105 @@ function deleteProduct(id, color){
 
 // eslint-disable-next-line no-unused-vars
 function updateQuantity(id, color, qty){
+    getProductList();
     //datamanager
     showPage();
 }
+
+
 
 //creation de l'objet contact
 let checkForm = document.querySelector("cart__order__form");
 
 checkForm.addEventListener("submit", function(event) {
     event.preventDefault();
-    const firstName = document.getElementById("firstName").value;
-    const lastName = document.getElementById("lastName");
-    const address = document.getElementById("address");
-    const city = document.getElementById("city");
-    const email = document.getElementById("email");
+    if(getCartContent().keys.length === 0){
+        alert("Votre panier est vide, veuillez selectionner un produit");
+        return;
+    }
 
+    const firstName = inputValue("firstName");
+    const lastName = inputValue("lastName");
+    const address = inputValue("address");
+    const city = inputValue("city");
+    const email = inputValue("email");
+
+    
     //l'objet contact
     const contact = {
-        firstName = firstName,
-        lastName = lastName,
-        address = address,
-        city = city,
-        email = email
-    }
+        firstName,
+        lastName,
+        address,
+        city,
+        email
+    };
+    
 
     //si le champs est validé regarder celui d'après sinon message d'erreur
-    if(firstNameIsValid(checkForm.firstName) == false){
-        alert("Veuillez entrer votre prénom");
+    validInput(firstName, "firstName");
+    validInput(lastName, "lastName");
+    validInput(city, "city");
+    validInput(email, "email");
+    validInput(address, "address");
 
-    }else if(lastNameIsValid(checkForm.lastName) == false){
-        alert("Veuillez entrer votre nom");
 
-    }else if(cityIsValid(checkForm.city) == false){
-        alert("Veuillez entrer votre ville");
-
-    }else if(mailIsValid(checkForm.email) == false){
-        alert("Veuillez entrer votre adresse email");
-
-    }else if(getCartContent.length == 0){
-        alert("Votre panier est vide, veuillez selectionner un produit");
-
-    }else{
-        saveForm(contact);
-    }
+    // saveForm(contact);
 });
 
+/*
 //function qui envoie l'objet contact dans le localStorage
 function saveForm(contact){
     localStorage.setItem("contact", JSON.stringify(contact));
 }
+*/
 
 //vérification de checkForm
-checkForm.firstName.addEventListener('change', function(){
-    firstNameIsValid(this);
+checkForm/*.firstName*/.addEventListener("change", function(){
+    validInput(this.value, "firstName");
 });
 
-checkForm.lastName.addEventListener('change', function(){
-    lastNameIsValid(this);
+checkForm/*.lastName*/.addEventListener("change", function(){
+    validInput(this.value, "lastName");
 });
 
-checkForm.city.addEventListener('change', function(){
-    cityIsValid(this);
+checkForm/*.city*/.addEventListener("change", function(){
+    validInput(this.value, "city");
 });
 
-checkForm.email.addEventListener('change', function(){
-    mailIsValid(this);
+checkForm/*.address*/.addEventListener("change", function(){
+    validInput(this.value, "address");
 });
+
+checkForm/*.email*/.addEventListener("change", function(){
+    validInput(this.value, "email");
+});
+
+checkForm();
+
+/**
+ * [validInput description]
+ *
+ * @param   {String}  value  [value description]
+ * @param   {("firstName" | "lastName" | "address" | "city" | "email")}  type   [type description]
+ *
+ * @return  {void}         [return description]
+ */
+function validInput(value, type){
+    const { regex, msg} = validator[type];
+    const isValid = regex.test(value);
+    document.getElementById(type+"ErrorMsg").innerText = isValid ? "" : msg;
+}
+
+function inputValue(id){
+    /**
+     * l'inout dans le DOM
+     *
+     * @type {HTMLInputElement}
+     */
+    const DOMtarget = document.querySelector("#"+id);
+    return DOMtarget.value;
+}
+
+function lastName(lastName) {
+    throw new Error("Function not implemented.");
+}
