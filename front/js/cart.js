@@ -6,23 +6,23 @@ console.log(cart);
 const validator  = {
     firstName : {
         msg : "Veuillez entrer votre prénom",
-        regex : /[a-z]{3,}/gi
+        regex : /^[a-zA-Z]{2,}$/gi
     },
     lastName : {
         msg : "Veuillez entrer votre nom",
-        regex : /[a-z]{3,}/gi
+        regex : /^[a-zA-Z]{2,}$/gi
     },
     city : {
         msg : "Veuillez entrer votre ville",
-        regex : /[a-z]{3,}/gi
+        regex : /^[a-zA-Z]{2,}$/gi
     },
     email : {
         msg : "Veuillez entrer votre adresse email",
-        regex : /[a-z]{3,}/gi
+        regex : /^[a-z0-9A-Z]+@{1,}[a-z0-9]{2,}\.[a-z]{2,4}$/gi
     },
     address : {
         msg : "Veuillez entrer votre adresse",
-        regex : /[a-z]{3,}/gi
+        regex : /^[0-9]{1,}[a-z0-9A-Z]{3,}$/gi
     }
 };
 
