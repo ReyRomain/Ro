@@ -32,9 +32,9 @@ const storage = !localStorage.cart ? {} : JSON.parse(localStorage.cart);
 /**
  * va chercher la liste des produits sur l'api
  *
- * @return  {Promise.<Array.<productData>>}  [return description]
+ * @return  {Promise.<Array.<productData>>}
  */
-async function getProductList(){
+async function getProductList() {
     const response = await fetch(source);
     return await response.json();
 }
@@ -43,48 +43,99 @@ async function getProductList(){
  * va chercher les informations d'un produit sur l'api
  * @param {String}  id la référence du produit
  *
- * @return  {Promise.<productData>}  [return description]
+ * @return  {Promise.<productData>}
  */
-async function getProduct(id){
+async function getProduct(id) {
     if (data[id]) return data[id];
-    const response = await fetch(source+"/"+id);
+    const response = await fetch(source + "/" + id);
     return await response.json();
 }
 
 /**
  * ajoute un produit au panier
  *
- * @param   {String}  productId  [productId description]
- * @param   {String}  color      [color description]
- * @param   {Number}  qty        [qty description]
+ * @param   {String}  productId  l'id d'un produit de l'API
+ * @param   {String}  color      la couleur de l'id
+ * @param   {Number}  qty        la quantité à ajouter
  *
  * @return  {void}               complète storage et le localStorage
  */
-function addToCart(productId, color, qty){
+function addToCart(productId, color, qty) {
     if (!storage[productId]) storage[productId] = {};
     if (!storage[productId][color]) storage[productId][color] = 0;
-    storage[productId][color] +=qty;
+    storage[productId][color] += qty;
     saveStorage();
 }
 
+/**
+ * change la quantité des produits au panier
+ *
+ * @param   {String}  productId  l'id d'un produit de l'API
+ * @param   {String}  color      la couleur de l'id
+ * @param   {Number}  newQty     la nouvelle quantité à modifier
+ *
+ * @return  {void}               actualise le localStorage
+ */
+function changeQty(productId, color, newQty) {
+    storage[productId][color] = newQty;
+    saveStorage();
+}
 
-function getCartContent(){
+/**
+ * affiche le storage
+ *
+ * @return  {void}
+ */
+function getCartContent() {
     return storage;
 }
 
-function removeProduct(id, color){
+/**
+ * retire l'id et la couleur du produit du panier
+ *
+ * @param   {String}  id     [id description]
+ * @param   {String}  color  [color description]
+ *
+ * @return  {void}
+ */
+function removeProduct(id, color) {
     delete storage[id][color];
     saveStorage();
 }
 
-function saveStorage(){
+/**
+ * sauvegarde le panier dans le localStorage
+ *
+ * @return  {void}
+ */
+function saveStorage() {
     localStorage.setItem("cart", JSON.stringify(storage));
+}
+
+/**
+ * effectue une requête POST sur l'API
+ *
+ * @param   {Boolean}  contact  [contact description]
+ *
+ * @return  {}           [return description]
+ */
+async function sendCommand(contact) {
+    const response = await fetch(source + "/" + "orderId", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ contact, products : Object.keys(storage) })
+    });
 }
 
 export {
     addToCart,
+    changeQty,
     getCartContent,
     getProduct,
     getProductList,
-    removeProduct
+    removeProduct,
+    sendCommand
 };
