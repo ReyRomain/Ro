@@ -1,38 +1,41 @@
-import {getCartContent, getProduct, getProductList, removeProduct} from "./datamanager.js";
+import {getCartContent, getProduct, changeQty, removeProduct, sendCommand} from "./datamanager.js";
 
-const cart = getCartContent();
-console.log(cart);
+exposeToWindow("updateQuantity", updateQuantity);
+exposeToWindow("deleteProduct", deleteProduct);
 
 const validator  = {
     firstName : {
         msg : "Veuillez entrer votre prénom",
-        regex : /^[a-zA-Z]{2,}$/gi
+        regex : /^[a-zé]{2,}$/gi
     },
     lastName : {
         msg : "Veuillez entrer votre nom",
-        regex : /^[a-zA-Z]{2,}$/gi
+        regex : /^[a-zé]{2,}$/gi
     },
     city : {
         msg : "Veuillez entrer votre ville",
-        regex : /^[a-zA-Z]{2,}$/gi
+        regex : /^[a-zé]{2,}$/gi
     },
     email : {
         msg : "Veuillez entrer votre adresse email",
-        regex : /^[a-z0-9A-Z]+@{1,}[a-z0-9]{2,}\.[a-z]{2,4}$/gi
+        regex : /^[a-zé0-9]+@{1,}[a-z0-9]{2,}\.[a-z]{2,4}$/gi
     },
     address : {
         msg : "Veuillez entrer votre adresse",
-        regex : /^[0-9]{1,}[a-z0-9A-Z]{3,}$/gi
+        regex : /^[0-9]{1,}[a-z0-9]{3,}$/gi
     }
 };
+// console.log(validator);
 
 async function showPage(){
+    const cart = getCartContent();
     let product;
     let html = "";
     let total = 0;
     let articles = 0;
     for (const [idProduct, colors] of Object.entries(cart)){
-        for (const [color, qty] of Object.entries(colors)){
+        for (let [color, qty] of Object.entries(colors)){
+            qty = parseInt(qty);
             product = {
                 ...await getProduct(idProduct),
                 qty,
@@ -76,15 +79,9 @@ function templateProduct(product){
     `;
 }
 
-/*
-//supprime le produit au click
-document.querySelectorAll(".deleteItem").forEach(item => item.addEventListener("click", (e) => {
-    let deleteItem = e.target.closest('cart_item');
-    let product = deleteItem.dataset;
-    removeProduct(product);
-    window.location.assign("cart.html");
-}));
-*/
+function exposeToWindow(key, value){
+    window[key] = value;
+}
 
 // eslint-disable-next-line no-unused-vars
 function deleteProduct(id, color){
@@ -94,16 +91,15 @@ function deleteProduct(id, color){
 
 // eslint-disable-next-line no-unused-vars
 function updateQuantity(id, color, qty){
-    getProductList();
-    //datamanager
+    changeQty(id, color, qty);
     showPage();
 }
 
 
-
 //creation de l'objet contact
-let checkForm = document.querySelector("cart__order__form");
+//const checkForm = document.querySelector("cart__order__form");
 
+/*
 checkForm.addEventListener("submit", function(event) {
     event.preventDefault();
     if(getCartContent().keys.length === 0){
@@ -136,63 +132,46 @@ checkForm.addEventListener("submit", function(event) {
     validInput(address, "address");
 
 
-    // saveForm(contact);
+    saveForm(contact);
 });
-
-/*
-//function qui envoie l'objet contact dans le localStorage
-function saveForm(contact){
-    localStorage.setItem("contact", JSON.stringify(contact));
-}
 */
 
-//vérification de checkForm
-checkForm/*.firstName*/.addEventListener("change", function(){
-    validInput(this.value, "firstName");
+
+
+document.querySelectorAll("input").forEach(input =>{
+    if (input.id === "order") {
+        input.onclick = validFields;
+        return;
+    }
+    if (!validator[input.id]) {
+        console.log("le champs", input.id,"n'est pas pris en charge");
+        return;
+    }
+    input.valid = function (){
+        const isValid = validator[input.id].regex.test(input.value);
+        document.getElementById(input.id+"ErrorMsg").innerText = isValid ? "" :validator[input.id].msg;
+        return isValid;
+    },
+    input.oninput = input.valid;
+
+
 });
 
-checkForm/*.lastName*/.addEventListener("change", function(){
-    validInput(this.value, "lastName");
-});
-
-checkForm/*.city*/.addEventListener("change", function(){
-    validInput(this.value, "city");
-});
-
-checkForm/*.address*/.addEventListener("change", function(){
-    validInput(this.value, "address");
-});
-
-checkForm/*.email*/.addEventListener("change", function(){
-    validInput(this.value, "email");
-});
-
-checkForm();
 
 /**
- * [validInput description]
+ * calcule le nombre d'erreur pour le formulaire de commande 
  *
- * @param   {String}  value  [value description]
- * @param   {("firstName" | "lastName" | "address" | "city" | "email")}  type   [type description]
- *
- * @return  {void}         [return description]
+ * @return  {[Object]}
  */
-function validInput(value, type){
-    const { regex, msg} = validator[type];
-    const isValid = regex.test(value);
-    document.getElementById(type+"ErrorMsg").innerText = isValid ? "" : msg;
-}
-
-function inputValue(id){
-    /**
-     * l'inout dans le DOM
-     *
-     * @type {HTMLInputElement}
-     */
-    const DOMtarget = document.querySelector("#"+id);
-    return DOMtarget.value;
-}
-
-function lastName(lastName) {
-    throw new Error("Function not implemented.");
+function validFields(){
+    let totalInput = 0, errorsInput=0;
+    const contact = {};
+    document.querySelectorAll("input").forEach(input =>{
+        if (!validator[input.id]) return;
+        totalInput++;
+        errorsInput += input.valid() ? 0 : 1;
+        contact[input.id] = input.value;
+    });
+    sendCommand(contact);
+    if (totalInput > 0 && errorsInput > 0) return;
 }
