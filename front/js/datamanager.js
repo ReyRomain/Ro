@@ -7,10 +7,7 @@
  * @property {String} name          le nom du produit exemple "Kanap Sinopé"
  * @property {Number} price         le prix  exemple 1849
  * @property {String} _id           la référence du produit exemple "107fb5b75607497b96722bda5b504926"
- * 
  */
-
-
 
 /***
  * la source des données (url)
@@ -120,7 +117,7 @@ function saveStorage() {
  *
  * @param   {Object}  contact  l'objet contact qui contient le formulaire valide
  *
- * @return  {Promise.<void>}   [return description]
+ * @return  {Promise.<void>}
  */
 async function sendCommand(contact) {
     const response = await fetch(source + "/order", {

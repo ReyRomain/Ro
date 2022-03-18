@@ -3,6 +3,11 @@ import {getCartContent, getProduct, changeQty, removeProduct, sendCommand} from 
 exposeToWindow("updateQuantity", updateQuantity);
 exposeToWindow("deleteProduct", deleteProduct);
 
+/**
+ * l'objet validator avec ses RegExp
+ *
+ * @var {Object}
+ */
 const validator  = {
     firstName : {
         msg : "Veuillez entrer votre prénom",
@@ -27,6 +32,11 @@ const validator  = {
 };
 // console.log(validator);
 
+/**
+ * affiche les produits du storage selectionner et les quantités selectionner
+ *
+ * @return  {Promise}
+ */
 async function showPage(){
     const cart = getCartContent();
     let product;
@@ -75,7 +85,7 @@ function templateProduct(product){
                 </div>
                 </div>
             </div>
-            </article>
+        </article>
     `;
 }
 
@@ -95,49 +105,7 @@ function updateQuantity(id, color, qty){
     showPage();
 }
 
-
-//creation de l'objet contact
-//const checkForm = document.querySelector("cart__order__form");
-
-/*
-checkForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    if(getCartContent().keys.length === 0){
-        alert("Votre panier est vide, veuillez selectionner un produit");
-        return;
-    }
-
-    const firstName = inputValue("firstName");
-    const lastName = inputValue("lastName");
-    const address = inputValue("address");
-    const city = inputValue("city");
-    const email = inputValue("email");
-
-    
-    //l'objet contact
-    const contact = {
-        firstName,
-        lastName,
-        address,
-        city,
-        email
-    };
-    
-
-    //si le champs est validé regarder celui d'après sinon message d'erreur
-    validInput(firstName, "firstName");
-    validInput(lastName, "lastName");
-    validInput(city, "city");
-    validInput(email, "email");
-    validInput(address, "address");
-
-
-    saveForm(contact);
-});
-*/
-
-
-
+//vérifie si les inputs sont validés par les RegExp
 document.querySelectorAll("input").forEach(input =>{
     if (input.id === "order") {
         input.addEventListener("click", validFields);
@@ -154,7 +122,6 @@ document.querySelectorAll("input").forEach(input =>{
     },
     input.oninput = input.valid;
 });
-
 
 /**
  * calcule le nombre d'erreur pour le formulaire de commande 

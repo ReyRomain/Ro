@@ -2,6 +2,11 @@ import {addToCart, getProduct} from "./datamanager.js";
 
 let id;
 
+/**
+ * retourne l'id du produit selectionner pour l'afficher sur la page produit 
+ *
+ * @return  {Promise}
+ */
 async function showProduct() {
     id = window.location.href.split("?id=")[1];
     const productSpecs = await getProduct(id);
@@ -51,9 +56,3 @@ document.getElementById("addToCart").onclick = function (){
 };
 
 showProduct();
-
-/*
-export {
-    showProduct
-}
-*/
