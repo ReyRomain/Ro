@@ -7,7 +7,10 @@
  * @property {String} name          le nom du produit exemple "Kanap Sinopé"
  * @property {Number} price         le prix  exemple 1849
  * @property {String} _id           la référence du produit exemple "107fb5b75607497b96722bda5b504926"
+ * 
  */
+
+
 
 /***
  * la source des données (url)
@@ -27,7 +30,7 @@ const data = {};
  *
  * @var {Object}
  */
-const storage = !localStorage.cart ? {} : JSON.parse(localStorage.cart);
+let storage = !localStorage.cart ? {} : JSON.parse(localStorage.cart);
 
 /**
  * va chercher la liste des produits sur l'api
@@ -82,9 +85,9 @@ function changeQty(productId, color, newQty) {
 }
 
 /**
- * affiche le storage
+ * retourne le storage
  *
- * @return  {void}
+ * @return  {Object}
  */
 function getCartContent() {
     return storage;
@@ -93,8 +96,8 @@ function getCartContent() {
 /**
  * retire l'id et la couleur du produit du panier
  *
- * @param   {String}  id     [id description]
- * @param   {String}  color  [color description]
+ * @param   {String}  id     id du produit
+ * @param   {String}  color  nom de la couleur
  *
  * @return  {void}
  */
@@ -115,12 +118,12 @@ function saveStorage() {
 /**
  * effectue une requête POST sur l'API
  *
- * @param   {Boolean}  contact  [contact description]
+ * @param   {Object}  contact  l'objet contact qui contient le formulaire valide
  *
- * @return  {}           [return description]
+ * @return  {Promise.<void>}   [return description]
  */
 async function sendCommand(contact) {
-    const response = await fetch(source + "/" + "orderId", {
+    const response = await fetch(source + "/order", {
         method: "POST",
         headers: {
             "Accept": "application/json",
@@ -128,6 +131,11 @@ async function sendCommand(contact) {
         },
         body: JSON.stringify({ contact, products : Object.keys(storage) })
     });
+    const data = await response.json();
+    // console.log(data);
+    storage = {};
+    saveStorage();
+    window.location.href="./confirmation.html?"+data.orderId;
 }
 
 export {

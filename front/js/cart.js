@@ -18,11 +18,11 @@ const validator  = {
     },
     email : {
         msg : "Veuillez entrer votre adresse email",
-        regex : /^[a-zé0-9]+@{1,}[a-z0-9]{2,}\.[a-z]{2,4}$/gi
+        regex : /^[a-z0-9.]+@{1,}[a-z0-9]{2,}\.[a-z]{2,4}$/gi
     },
     address : {
         msg : "Veuillez entrer votre adresse",
-        regex : /^[0-9]{1,}[a-z0-9]{3,}$/gi
+        regex : /^[0-9]{1,}[a-z0-9 ]{3,}$/gi
     }
 };
 // console.log(validator);
@@ -140,7 +140,7 @@ checkForm.addEventListener("submit", function(event) {
 
 document.querySelectorAll("input").forEach(input =>{
     if (input.id === "order") {
-        input.onclick = validFields;
+        input.addEventListener("click", validFields);
         return;
     }
     if (!validator[input.id]) {
@@ -153,25 +153,27 @@ document.querySelectorAll("input").forEach(input =>{
         return isValid;
     },
     input.oninput = input.valid;
-
-
 });
 
 
 /**
  * calcule le nombre d'erreur pour le formulaire de commande 
  *
- * @return  {[Object]}
+ * @return  {void}
  */
-function validFields(){
+function validFields(event){
+    console.log(event);
+    event.stopPropagation();
+    event.preventDefault();
     let totalInput = 0, errorsInput=0;
     const contact = {};
     document.querySelectorAll("input").forEach(input =>{
         if (!validator[input.id]) return;
+        console.log(input, validator[input.id],input.valid());
         totalInput++;
         errorsInput += input.valid() ? 0 : 1;
         contact[input.id] = input.value;
     });
-    sendCommand(contact);
     if (totalInput > 0 && errorsInput > 0) return;
+    sendCommand(contact);
 }
