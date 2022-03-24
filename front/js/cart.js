@@ -30,12 +30,11 @@ const validator  = {
         regex : /^[0-9]{1,}[a-z0-9 ]{3,}$/gi
     }
 };
-// console.log(validator);
 
 /**
- * affiche les produits du storage selectionner et les quantités selectionner
+ * affiche les produits du storage selectionné et les quantités selectionné
  *
- * @return  {Promise}
+ * @return  {Promise.<void>}
  */
 async function showPage(){
     const cart = getCartContent();
@@ -63,6 +62,20 @@ async function showPage(){
 
 showPage();
 
+/**
+ * le gabarit d'un produit dans le panier
+ *
+ * @param   {Object}  product           les informations du produit
+ * @param   {String}  product._id       l'id du produit
+ * @param   {Number}  product.price     le prix
+ * @param   {Number}  product.qty       la quantité
+ * @param   {String}  product.altTxt    le texte alternatif
+ * @param   {String}  product.color     la variante couleur
+ * @param   {String}  product.imageUrl  l'url de l'image à afficher
+ * @param   {String}  product.name      le nom du produit
+ *
+ * @return  {String}                    le html à injecter dans la page
+ */
 function templateProduct(product){
     return /*html*/ `
         <article class="cart__item" data-id="${product._id}" data-color="${product.color}">
@@ -89,16 +102,41 @@ function templateProduct(product){
     `;
 }
 
+/**
+ * expose un élément dans le DOM (puisqu'innaccessible ici à cause du type module)
+ *
+ * @param   {String}  key     le nom auquel il sera accessible depuis le DOM
+ * @param   {*}       value   l'élément à associer
+ *
+ * @return  {void}
+ */
 function exposeToWindow(key, value){
     window[key] = value;
 }
 
+/**
+ * au clic supprime un produit du panier
+ * 
+ * @param {String}    id      l'id à supprimer
+ * @param {String}    color   la variante couleur à supprimer
+ * 
+ * @return {void}             rafraichi l'affichage
+ */
 // eslint-disable-next-line no-unused-vars
 function deleteProduct(id, color){
     removeProduct(id, color);
     showPage();
 }
 
+/**
+ * à la modification de l'input change la quantité d'un produit du panier
+ * 
+ * @param {String}    id      l'id à supprimer
+ * @param {String}    color   la variante couleur
+ * @param {Number}    qty     la nouvelle quantité
+ * 
+ * @return {void}             rafraichi l'affichage
+ */
 // eslint-disable-next-line no-unused-vars
 function updateQuantity(id, color, qty){
     changeQty(id, color, qty);
@@ -126,6 +164,8 @@ document.querySelectorAll("input").forEach(input =>{
 /**
  * calcule le nombre d'erreur pour le formulaire de commande 
  *
+ * @param   {Event}  event
+ * 
  * @return  {void}
  */
 function validFields(event){
