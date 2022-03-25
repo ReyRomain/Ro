@@ -162,21 +162,20 @@ document.querySelectorAll("input").forEach(input =>{
 });
 
 /**
- * calcule le nombre d'erreur pour le formulaire de commande 
+ * calcule le nombre d'erreur pour le formulaire de contact 
  *
  * @param   {Event}  event
  * 
- * @return  {void}
+ * @return  {void}   appelle sendCommand si il n'y a pas d'erreurs
  */
 function validFields(event){
-    console.log(event);
     event.stopPropagation();
     event.preventDefault();
     let totalInput = 0, errorsInput=0;
     const contact = {};
     document.querySelectorAll("input").forEach(input =>{
         if (!validator[input.id]) return;
-        console.log(input, validator[input.id],input.valid());
+        // console.log(input, validator[input.id],input.valid());
         totalInput++;
         errorsInput += input.valid() ? 0 : 1;
         contact[input.id] = input.value;

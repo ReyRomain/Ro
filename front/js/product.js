@@ -3,9 +3,9 @@ import {addToCart, getProduct} from "./datamanager.js";
 let id;
 
 /**
- * retourne l'id du produit selectionner pour l'afficher sur la page produit 
+ * afffiche le produit dans le page
  *
- * @return  {Promise}
+ * @return  {Promise.<void>}  
  */
 async function showProduct() {
     id = window.location.href.split("?id=")[1];
@@ -37,9 +37,14 @@ async function showProduct() {
     document.querySelector("#colors").innerHTML = colorsOptions;
 }
 
+/**
+ * ajoute au click un produit au panier
+ *
+ * @return  {void}     ajoute le produit au panier et affiche un message de confirmation
+ */
 document.getElementById("addToCart").onclick = function (){
     /**
-     * @type   {HTMLInputElement}  document
+     * @type   {HTMLInputElement}  DOMqty
      */
     const DOMqty = document.querySelector("#quantity");
     const qty = parseInt(DOMqty.value);
@@ -53,6 +58,7 @@ document.getElementById("addToCart").onclick = function (){
         colors.value,
         qty
     );
+    alert("votre produit à bien été ajouté au panier");
 };
 
 showProduct();
